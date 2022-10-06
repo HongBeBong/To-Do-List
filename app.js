@@ -1,5 +1,5 @@
 
-
+//jshint esversion:6
 const express = require('express');
 const bodyParser = require('body-parser');
 
@@ -7,6 +7,9 @@ const app = express();
 
 
 app.set('view engine', 'ejs');
+app.use(bodyParser.urlencoded({ extended: true }));
+
+var items = [];
 
 app.get('/', (req, res) => {
 
@@ -14,32 +17,24 @@ app.get('/', (req, res) => {
 
     currentDay = today.getDay();
 
-    switch (currentDay) {
-        case 0:
-            day = "Sunday";
-            break;
-        case 1:
-            day = "Monday";
-            break;
-        case 2:
-            day = "Tuesday";
-            break;
-        case 3:
-            day = "Wednesday";
-            break;
-        case 4:
-            day = "Thurday";
-            break;
-        case 5:
-            day = "Friday";
-            break;
-        case 6:
-            day = "Sartuday";
-            break;
-    }
+    var options = {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+    };
 
-    res.render('list', { kindOfDay: day });
+    var day = today.toLocaleDateString("en-US", options);
 
+
+    res.render('list', { kindOfDay: day , items: items});
+
+});
+
+
+app.post('/', (req, res) => {
+    var item = req.body.newItem;
+    items.push(item);
+    res.redirect('/');
 });
 
 

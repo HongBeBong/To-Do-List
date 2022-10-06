@@ -10,23 +10,18 @@
 
 <body>
 
-    <%
-        if (kindOfDay === "Sunday" || kindOfDay === "Sartuday")
-        {
-    %>
-        <h2 style="color: purple;">
-            <%= kindOfDay %> To Do List
-        </h2>
-    <%
-        }else{
-    %>
-        <h2 style="color: green">
-            <%= kindOfDay %> To Do List
-        </h2>
-    <%
-        }
-    %>
+   <h1><%= kindOfDay %></h1>
+   <ul>
+    <% for (let i = 0; i < items.length; i++) {%>
+        <li><%=items[i]%></li>
+    <%}%>
 
+   </ul>
+
+   <form action="/" method="post">
+    <input type="text" name="newItem" placeholder="Enter your work">
+    <button type="submit" name="button">Add</button>
+   </form>
 
 </body>
 
