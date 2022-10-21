@@ -3,6 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const date = require(__dirname + "/date.js");
 const mongoose = require("mongoose");
+const _ = require("lodash");
 
 mongoose.connect("mongodb://localhost:27017/todolistDB", {
   useNewUrlParser: true,
@@ -80,19 +81,34 @@ app.post("/", (req, res) => {
 
 app.post("/delete", (req, res) => {
   const id = req.body.checkbox;
-  Item.findByIdAndRemove(id, (err) => {
-    if (err) {
-      console.log("Error " + err);
-    } else {
-      console.log("Successfully");
-    }
-  });
-  res.redirect("/");
+  const listName = req.body.listTitle;
+  console.log(listName);
+
+  if (listName === "Today") {
+    Item.findByIdAndRemove(id, (err) => {
+      if (err) {
+        console.log("Error " + err);
+      } else {
+        console.log("Successfully");
+      }
+    });
+    res.redirect("/");
+  } else {
+    List.findOneAndUpdate(
+      { name: listName },
+      { $pull: { items: { _id: id } } },
+      (err) => {
+        if (!err) {
+          res.redirect("/" + listName);
+        }
+      }
+    );
+  }
 });
 
 app.get("/:customListName", (req, res) => {
   // get parameter from url
-  const customListName = req.params.customListName;
+  const customListName = _.capitalize(req.params.customListName);
 
   List.findOne({ name: customListName }, (err, foundList) => {
     if (!err) {
